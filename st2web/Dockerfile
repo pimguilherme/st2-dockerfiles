@@ -11,7 +11,7 @@ LABEL com.stackstorm.support="Community"
 LABEL com.stackstorm.version="${ST2_VERSION}"
 LABEL com.stackstorm.name="StackStorm K8s HA"
 LABEL com.stackstorm.description="Docker image, optimized to run StackStorm \
-components and core services with Highly Available requirements in Kubernetes environment"
+  components and core services with Highly Available requirements in Kubernetes environment"
 LABEL com.stackstorm.url="https://stackstorm.com/#product"
 LABEL com.stackstorm.component="st2web"
 
@@ -27,9 +27,9 @@ ENV ST2_STREAM_URL http://st2stream:9102/
 # Generate UTF-8 locale
 RUN apt-get -qq update \
   && apt-get install -y \
-    curl \
-    locales \
-    gpg \
+  curl \
+  locales \
+  gpg \
   && rm -rf /var/lib/apt/lists/* \
   && locale-gen en_US.UTF-8 \
   && update-locale LANG=en_US.UTF-8 LANGUAGE=en_US:en LC_ALL=en_US.UTF-8
@@ -44,23 +44,30 @@ RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys ABF5BD827B
   && rm -f /etc/apt/sources.list.d/nginx.list
 
 # Install StackStorm Web UI
-RUN if [ "${ST2_VERSION#*dev}" != "${ST2_VERSION}" ]; then \
-    ST2_REPO=unstable; \
-  else \
-    ST2_REPO=stable; \
-  fi \
-  && echo ST2_REPO=${ST2_REPO} \
-  && curl -s https://packagecloud.io/install/repositories/StackStorm/${ST2_REPO}/script.deb.sh | bash \
-  && apt-get install -y st2web=${ST2_VERSION}-* \
-  && rm -f /etc/apt/sources.list.d/StackStorm_*.list
+# RUN if [ "${ST2_VERSION#*dev}" != "${ST2_VERSION}" ]; then \
+#     ST2_REPO=unstable; \
+#   else \
+#     ST2_REPO=stable; \
+#   fi \
+#   && echo ST2_REPO=${ST2_REPO} \
+#   && curl -s https://packagecloud.io/install/repositories/StackStorm/${ST2_REPO}/script.deb.sh | bash \
+#   && apt-get install -y st2web=${ST2_VERSION}-* \
+#   && rm -f /etc/apt/sources.list.d/StackStorm_*.list
+
+
+RUN TEMP_DEB="/tmp/st2web.deb" && \
+  curl -o "$TEMP_DEB" -L 'https://output.circle-artifacts.com/output/job/90a07f69-2c58-475a-b6f4-96031ad2d4ef/artifacts/0/packages/focal/st2web_3.8dev-1_amd64.deb' && \
+  apt update && \
+  apt install -y "$TEMP_DEB" && \
+  rm -f "$TEMP_DEB"
 
 # Download st2.conf and apply patch
 COPY files/st2.conf-http.patch /tmp
 COPY files/st2.conf-https.patch /tmp
 RUN if [ "${ST2_VERSION#*dev}" != "${ST2_VERSION}" ]; then \
-    ST2_BRANCH=master; \
+  ST2_BRANCH=master; \
   else \
-    ST2_BRANCH=v${ST2_VERSION%.*}; \
+  ST2_BRANCH=v${ST2_VERSION%.*}; \
   fi \
   && echo ST2_BRANCH=${ST2_BRANCH} \
   && apt-get install -y patch gettext-base \

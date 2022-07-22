@@ -11,7 +11,7 @@ LABEL com.stackstorm.support="Community"
 LABEL com.stackstorm.version="${ST2_VERSION}"
 LABEL com.stackstorm.name="StackStorm K8s HA"
 LABEL com.stackstorm.description="Docker image, optimized to run StackStorm \
-components and core services with Highly Available requirements in Kubernetes environment"
+  components and core services with Highly Available requirements in Kubernetes environment"
 LABEL com.stackstorm.url="https://stackstorm.com/#product"
 
 ENV container docker
@@ -21,10 +21,10 @@ ENV TERM xterm
 # Generate and set locale to UTF-8
 RUN apt-get -qq update \
   && apt-get install -y \
-    curl \
-    locales \
-    gpg \
-    lsb-release \
+  curl \
+  locales \
+  gpg \
+  lsb-release \
   && rm -rf /var/lib/apt/lists/* \
   && locale-gen en_US.UTF-8 \
   && update-locale LANG=en_US.UTF-8 LANGUAGE=en_US:en LC_ALL=en_US.UTF-8
@@ -33,15 +33,21 @@ RUN apt-get -qq update \
 ENV LANG='en_US.UTF-8' LANGUAGE='en_US:en' LC_ALL='en_US.UTF-8'
 
 # Install StackStorm, but without UI
-RUN if [ "${ST2_VERSION#*dev}" != "${ST2_VERSION}" ]; then \
-    ST2_REPO=unstable; \
-  else \
-    ST2_REPO=stable; \
-  fi \
-  && echo ST2_REPO=${ST2_REPO} \
-  && curl -sf https://packagecloud.io/install/repositories/StackStorm/${ST2_REPO}/script.deb.sh | bash \
-  && apt-get install -y st2=${ST2_VERSION}-* \
-  && rm -f /etc/apt/sources.list.d/StackStorm_*.list
+# RUN if [ "${ST2_VERSION#*dev}" != "${ST2_VERSION}" ]; then \
+#     ST2_REPO=unstable; \
+#   else \
+#     ST2_REPO=stable; \
+#   fi \
+#   && echo ST2_REPO=${ST2_REPO} \
+#   && curl -sf https://packagecloud.io/install/repositories/StackStorm/${ST2_REPO}/script.deb.sh | bash \
+#   && apt-get install -y st2=${ST2_VERSION}-* \
+#   && rm -f /etc/apt/sources.list.d/StackStorm_*.list
+
+RUN TEMP_DEB="/tmp/st2.deb" && \
+  curl -o "$TEMP_DEB" -L 'https://output.circle-artifacts.com/output/job/54542eb6-74d4-4211-a3a2-785d4f57ed71/artifacts/1/packages/focal/st2_3.8dev-1_amd64.deb' && \
+  apt update && \
+  apt install -y "$TEMP_DEB" && \
+  rm -f "$TEMP_DEB"
 
 # Remove openssh server keys
 RUN rm -f /etc/ssh/ssh_host*
@@ -60,8 +66,8 @@ COPY files/st2ctl /etc/default/
 # Use custom logging config that'll stream all st2 service logs to stdout and never save to files
 RUN cd /etc/st2; \
   for file in /etc/st2/logging.*.conf; do \
-    rm -f ${file}; \
-    ln -s logging.docker.conf ${file}; \
+  rm -f ${file}; \
+  ln -s logging.docker.conf ${file}; \
   done
 COPY files/logging.docker.conf /etc/st2/
 
