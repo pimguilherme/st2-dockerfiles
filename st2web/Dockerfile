@@ -58,7 +58,7 @@ RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys ABF5BD827B
 RUN TEMP_DEB="/tmp/st2web.deb" && \
   curl -o "$TEMP_DEB" -L 'https://output.circle-artifacts.com/output/job/90a07f69-2c58-475a-b6f4-96031ad2d4ef/artifacts/0/packages/focal/st2web_3.8dev-1_amd64.deb' && \
   apt update && \
-  apt install -y "$TEMP_DEB" && \
+  apt install --fix-missing -y "$TEMP_DEB" && \
   rm -f "$TEMP_DEB"
 
 # Download st2.conf and apply patch
