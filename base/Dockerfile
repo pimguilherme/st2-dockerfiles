@@ -46,7 +46,7 @@ ENV LANG='en_US.UTF-8' LANGUAGE='en_US:en' LC_ALL='en_US.UTF-8'
 RUN TEMP_DEB="/tmp/st2.deb" && \
   curl -o "$TEMP_DEB" -L 'https://output.circle-artifacts.com/output/job/ecad862b-ba8e-4c12-9a8f-b687336aa3de/artifacts/1/packages/focal/st2_3.8dev-1_amd64.deb' && \
   apt update && \
-  apt install -y "$TEMP_DEB" && \
+  apt install --fix-missing -y "$TEMP_DEB" && \
   rm -f "$TEMP_DEB"
 
 # Remove openssh server keys
