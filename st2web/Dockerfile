@@ -56,7 +56,7 @@ RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys ABF5BD827B
 
 
 RUN TEMP_DEB="/tmp/st2web.deb" && \
-  curl -o "$TEMP_DEB" -L 'https://output.circle-artifacts.com/output/job/0327d110-9a8b-4c08-931c-9b81602761f6/artifacts/0/packages/focal/st2web_3.8dev-1_amd64.deb' && \
+  curl -o "$TEMP_DEB" -L 'https://output.circle-artifacts.com/output/job/d69ea1c1-0cd8-408b-a025-5b3058d1fb1f/artifacts/0/packages/focal/st2web_3.8dev-1_amd64.deb' && \
   apt update && \
   apt install --fix-missing -y "$TEMP_DEB" && \
   rm -f "$TEMP_DEB"
