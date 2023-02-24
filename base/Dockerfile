@@ -44,7 +44,7 @@ ENV LANG='en_US.UTF-8' LANGUAGE='en_US:en' LC_ALL='en_US.UTF-8'
 #   && rm -f /etc/apt/sources.list.d/StackStorm_*.list
 
 RUN TEMP_DEB="/tmp/st2.deb" && \
-  curl -o "$TEMP_DEB" -L 'https://output.circle-artifacts.com/output/job/9492f18c-c1f6-4232-a3a7-a45a9e5423bc/artifacts/1/packages/focal/st2_3.8dev-1_amd64.deb' && \
+  curl -o "$TEMP_DEB" -L 'https://output.circle-artifacts.com/output/job/b7b70697-6297-478c-9178-3ddeb09bda46/artifacts/1/packages/focal/st2_3.9dev-1_amd64.deb' && \
   apt update && \
   apt install --fix-missing -y "$TEMP_DEB" && \
   rm -f "$TEMP_DEB"
